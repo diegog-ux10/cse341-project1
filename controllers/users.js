@@ -87,10 +87,10 @@ const updateUser = async (req, res) => {
         const result = await db.collection('users').findOneAndUpdate(
             { _id: userId },
             { $set: { email, username, name, ipaddress } },
-            { returnDocument: 'after' }
+            { upsert: true, returnDocument: 'after' }
         );
 
-        if (!result.value) {
+        if (!result) {
             console.log('User not found for ID:', userId);
             return res.status(404).json({ error: 'User not found' });
         }
