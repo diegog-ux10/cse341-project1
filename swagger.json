@@ -10,23 +10,41 @@
   "schemes": [
     "https"
   ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "API endpoints for managing users"
+    }
+  ],
   "paths": {
     "/": {
       "get": {
-        "description": "",
+        "summary": "Home endpoint",
+        "description": "Returns a welcome message",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "schema": {
+              "type": "string"
+            }
           }
         }
       }
     },
     "/users/": {
       "get": {
-        "description": "",
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Retrieve a list of all users",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -34,33 +52,26 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Users"],
+        "summary": "Create a new user",
+        "description": "Add a new user to the database",
         "parameters": [
           {
-            "name": "body",
+            "name": "user",
             "in": "body",
+            "description": "User object to be added",
+            "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "username": {
-                  "example": "any"
-                },
-                "name": {
-                  "example": "any"
-                },
-                "ipaddress": {
-                  "example": "any"
-                }
-              }
+              "$ref": "#/definitions/NewUser"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -73,24 +84,30 @@
     },
     "/users/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Users"],
+        "summary": "Get a single user",
+        "description": "Retrieve details of a specific user",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "User ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -98,45 +115,39 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Users"],
+        "summary": "Update a user",
+        "description": "Modify details of an existing user",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "User ID"
           },
           {
-            "name": "body",
+            "name": "user",
             "in": "body",
+            "description": "Updated user object",
+            "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "username": {
-                  "example": "any"
-                },
-                "name": {
-                  "example": "any"
-                },
-                "ipaddress": {
-                  "example": "any"
-                }
-              }
+              "$ref": "#/definitions/NewUser"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful update",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -144,28 +155,90 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Users"],
+        "summary": "Delete a user",
+        "description": "Remove a user from the database",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "User ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Successful deletion",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not found"
           },
           "500": {
             "description": "Internal Server Error"
           }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ipaddress": {
+          "type": "string"
+        }
+      }
+    },
+    "NewUser": {
+      "type": "object",
+      "required": ["email", "username", "name"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ipaddress": {
+          "type": "string"
+        }
+      }
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
         }
       }
     }
