@@ -8,7 +8,7 @@
   "host": "https://cse341-project1-qm1h.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/": {
