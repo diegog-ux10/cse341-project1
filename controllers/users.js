@@ -76,16 +76,26 @@ const updateUser = async (req, res) => {
             return res.status(400).json({ error: 'Invalid user ID format' });
         }
 
+        // Basic validation of req.body
+        const { email, username, name, ipaddress } = req.body;
+        if (!email && !username && !name && !ipaddress) {
+            return res.status(400).json({ error: 'No valid fields provided for update' });
+        }
+
         const db = mongodb.getDb();
         const userId = new ObjectId(req.params.id);
-        const result = await db.collection('users').updateOne({ _id: userId }, { $set: req.body });
+        const result = await db.collection('users').findOneAndUpdate(
+            { _id: userId },
+            { $set: { email, username, name, ipaddress } },
+            { returnDocument: 'after' }
+        );
 
-        if (result.modifiedCount === 0) {
+        if (!result.value) {
             console.log('User not found for ID:', userId);
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json({ message: 'User updated successfully' });
+        res.json({ message: 'User updated successfully', user: result.value });
     } catch (err) {
         console.error('Error in updateUser:', err);
         res.status(500).json({ error: 'Internal server error' });
